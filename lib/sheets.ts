@@ -1,15 +1,20 @@
 import { google } from 'googleapis';
 import { Pilot, Drone, Mission } from './types';
 
-// Initialize Google Sheets API
-const auth = new google.auth.JWT(
-  process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-  undefined,
-  process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  ['https://www.googleapis.com/auth/spreadsheets']
-);
+// Initialize Google Sheets API lazily
+let sheetsClient: any = null;
 
-const sheets = google.sheets({ version: 'v4', auth });
+function getSheetsClient() {
+  if (!sheetsClient) {
+    const auth = new google.auth.JWT({
+      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+    sheetsClient = google.sheets({ version: 'v4', auth });
+  }
+  return sheetsClient;
+}
 
 // Sheet IDs from environment variables
 const SHEET_ID_PILOTS = process.env.GOOGLE_SHEET_ID_PILOTS || '';
@@ -21,13 +26,14 @@ const SHEET_ID_MISSIONS = process.env.GOOGLE_SHEET_ID_MISSIONS || '';
  */
 export async function readPilots(): Promise<Pilot[]> {
   try {
+    const sheets = getSheetsClient();
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID_PILOTS,
       range: 'Sheet1!A2:I', // Skip header row
     });
 
     const rows = response.data.values || [];
-    return rows.map((row) => ({
+    return rows.map((row: any[]) => ({
       pilot_id: row[0] || '',
       name: row[1] || '',
       skills: row[2] || '',
@@ -49,13 +55,14 @@ export async function readPilots(): Promise<Pilot[]> {
  */
 export async function readDrones(): Promise<Drone[]> {
   try {
+    const sheets = getSheetsClient();
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID_DRONES,
       range: 'Sheet1!A2:H', // Skip header row
     });
 
     const rows = response.data.values || [];
-    return rows.map((row) => ({
+    return rows.map((row: any[]) => ({
       drone_id: row[0] || '',
       model: row[1] || '',
       capabilities: row[2] || '',
@@ -76,13 +83,14 @@ export async function readDrones(): Promise<Drone[]> {
  */
 export async function readMissions(): Promise<Mission[]> {
   try {
+    const sheets = getSheetsClient();
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID_MISSIONS,
       range: 'Sheet1!A2:J', // Skip header row
     });
 
     const rows = response.data.values || [];
-    return rows.map((row) => ({
+    return rows.map((row: any[]) => ({
       project_id: row[0] || '',
       client: row[1] || '',
       location: row[2] || '',
@@ -108,6 +116,7 @@ export async function updatePilotStatus(
   newStatus: string
 ): Promise<void> {
   try {
+    const sheets = getSheetsClient();
     const pilots = await readPilots();
     const pilotIndex = pilots.findIndex((p) => p.pilot_id === pilotId);
 
@@ -139,6 +148,7 @@ export async function updateDroneStatus(
   newStatus: string
 ): Promise<void> {
   try {
+    const sheets = getSheetsClient();
     const drones = await readDrones();
     const droneIndex = drones.findIndex((d) => d.drone_id === droneId);
 
@@ -171,6 +181,7 @@ export async function updateAssignment(
   assignment: string
 ): Promise<void> {
   try {
+    const sheets = getSheetsClient();
     if (sheetType === 'pilot') {
       const pilots = await readPilots();
       const pilotIndex = pilots.findIndex((p) => p.pilot_id === id);

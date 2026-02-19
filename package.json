@@ -12,7 +12,12 @@
     "type": "git",
     "url": "git+https://github.com/BavishGIhub/drone-ops-coordinator.git"
   },
-  "keywords": ["drone", "ai", "nextjs", "openai"],
+  "keywords": [
+    "drone",
+    "ai",
+    "nextjs",
+    "openai"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -20,6 +25,7 @@
   },
   "homepage": "https://github.com/BavishGIhub/drone-ops-coordinator#readme",
   "dependencies": {
+    "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^25.3.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

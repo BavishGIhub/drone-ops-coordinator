@@ -7,9 +7,19 @@ import { detectConflicts } from './conflicts';
 import { updatePilotStatus, updateDroneStatus } from './sheets';
 import { urgentReassignment } from './urgent';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI client lazily
+let openaiClient: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (!openaiClient) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+    openaiClient = new OpenAI({ apiKey });
+  }
+  return openaiClient;
+}
 
 // Define tools for the AI agent
 const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
@@ -286,6 +296,11 @@ const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
 
 // Execute tool calls
 async function executeToolCall(toolCall: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) {
+  // Type guard to ensure we have a function tool call
+  if (toolCall.type !== 'function') {
+    return { error: 'Invalid tool call type' };
+  }
+
   const functionName = toolCall.function.name;
   const args = JSON.parse(toolCall.function.arguments);
 
@@ -339,6 +354,8 @@ async function executeToolCall(toolCall: OpenAI.Chat.Completions.ChatCompletionM
 
 // Main agent function
 export async function runAgent(messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]) {
+  const openai = getOpenAIClient();
+  
   const systemMessage: OpenAI.Chat.Completions.ChatCompletionMessageParam = {
     role: 'system',
     content: `You are a professional drone operations coordinator for Skylark Drones. You help manage:
