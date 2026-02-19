@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { queryPilots, calculatePilotCost } from './roster';
 import { queryDrones } from './drones';
 import { queryMissions } from './missions';
@@ -25,12 +25,12 @@ const functionDeclarations = [
     name: 'query_pilots',
     description: 'Query pilots by skill, certification, location, or availability status',
     parameters: {
-      type: 'object',
+      type: SchemaType.OBJECT,
       properties: {
-        skill: { type: 'string', description: 'Filter by skill' },
-        certification: { type: 'string', description: 'Filter by certification' },
-        location: { type: 'string', description: 'Filter by location' },
-        status: { type: 'string', description: 'Filter by status' },
+        skill: { type: SchemaType.STRING, description: 'Filter by skill' },
+        certification: { type: SchemaType.STRING, description: 'Filter by certification' },
+        location: { type: SchemaType.STRING, description: 'Filter by location' },
+        status: { type: SchemaType.STRING, description: 'Filter by status' },
       },
     },
   },
@@ -38,12 +38,12 @@ const functionDeclarations = [
     name: 'query_drones',
     description: 'Query drones by capability, availability, location, or weather resistance',
     parameters: {
-      type: 'object',
+      type: SchemaType.OBJECT,
       properties: {
-        capability: { type: 'string', description: 'Filter by capability' },
-        location: { type: 'string', description: 'Filter by location' },
-        status: { type: 'string', description: 'Filter by status' },
-        weather_resistant: { type: 'boolean', description: 'Filter by weather resistance' },
+        capability: { type: SchemaType.STRING, description: 'Filter by capability' },
+        location: { type: SchemaType.STRING, description: 'Filter by location' },
+        status: { type: SchemaType.STRING, description: 'Filter by status' },
+        weather_resistant: { type: SchemaType.BOOLEAN, description: 'Filter by weather resistance' },
       },
     },
   },
@@ -51,11 +51,11 @@ const functionDeclarations = [
     name: 'query_missions',
     description: 'Query missions by client, location, priority',
     parameters: {
-      type: 'object',
+      type: SchemaType.OBJECT,
       properties: {
-        client: { type: 'string', description: 'Filter by client name' },
-        location: { type: 'string', description: 'Filter by mission location' },
-        priority: { type: 'string', description: 'Filter by priority' },
+        client: { type: SchemaType.STRING, description: 'Filter by client name' },
+        location: { type: SchemaType.STRING, description: 'Filter by mission location' },
+        priority: { type: SchemaType.STRING, description: 'Filter by priority' },
       },
     },
   },
