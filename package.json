@@ -1,0 +1,47 @@
+{
+  "name": "drone-ops-coordinator",
+  "version": "1.0.0",
+  "description": "AI-powered agent for managing drone fleet operations, pilot assignments, and conflict detection",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "node test-logic.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BavishGIhub/drone-ops-coordinator.git"
+  },
+  "keywords": [
+    "drone",
+    "ai",
+    "nextjs",
+    "openai"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BavishGIhub/drone-ops-coordinator/issues"
+  },
+  "homepage": "https://github.com/BavishGIhub/drone-ops-coordinator#readme",
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.2.0",
+    "@types/node": "^25.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.24",
+    "googleapis": "^171.4.0",
+    "next": "^16.1.6",
+    "openai": "^6.22.0",
+    "postcss": "^8.5.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.2.0",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.6"
+  }
+}
