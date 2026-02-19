@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node test-logic.js"
   },
   "repository": {
     "type": "git",
@@ -38,5 +39,9 @@
     "react-dom": "^19.2.4",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.6"
   }
 }
