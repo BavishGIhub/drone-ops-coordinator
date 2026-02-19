@@ -14,7 +14,8 @@ export default function Home() {
     {
       role: 'assistant',
       content:
-        '👋 Welcome to **Skylark Drones Operations Center**!\n\nI''m your AI-powered coordinator. I can help you with:\n\n🧑‍✈️ **Pilot Management** - Check availability, skills, certifications\n\n🚁 **Drone Fleet** - Track inventory, capabilities, maintenance\n\n📋 **Missions** - Assign pilots & drones, detect conflicts\n\n⚡ **Urgent Actions** - Handle reassignments quickly\n\nTry asking:\n- "Show me available pilots in Bangalore"\n- "Which drones can fly in rainy weather?"\n- "Assign the best team to PRJ001'\n    },
+        'Welcome to Skylark Drones Operations Coordinator! I can help you with:\n\n• Pilot roster management\n• Drone fleet inventory\n• Mission assignments\n• Conflict detection\n• Urgent reassignments\n\nHow can I assist you today?',
+    },
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -62,7 +63,7 @@ export default function Home() {
         ...prev,
         {
           role: 'assistant',
-          content: '❌ Sorry, I encountered an error processing your request. Please try again.',
+          content: 'Sorry, I encountered an error processing your request. Please try again.',
         },
       ]);
     } finally {
@@ -71,8 +72,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"> 
-      {/* Header */}
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <header className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white py-5 px-6 shadow-xl border-b border-indigo-500/30">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -101,7 +101,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Chat Area */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-4xl mx-auto space-y-4">
           {messages.map((msg, idx) => (
@@ -125,13 +124,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Input Area */}
       <div className="bg-slate-800/80 backdrop-blur-xl border-t border-slate-700/50 shadow-2xl">
         <div className="max-w-4xl mx-auto">
           <ChatInput onSend={handleSend} disabled={isLoading} />
         </div>
         <div className="text-center pb-3">
-          <p className="text-xs text-slate-500">Powered by AI • Real-time Google Sheets Sync</p>
+          <p className="text-xs text-slate-500">Powered by AI - Real-time Google Sheets Sync</p>
         </div>
       </div>
     </div>
