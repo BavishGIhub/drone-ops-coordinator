@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { queryPilots, calculatePilotCost } from './roster';
 import { queryDrones } from './drones';
 import { queryMissions } from './missions';
@@ -19,47 +19,6 @@ function getGeminiClient(): GoogleGenerativeAI {
   }
   return geminiClient;
 }
-
-const functionDeclarations = [
-  {
-    name: 'query_pilots',
-    description: 'Query pilots by skill, certification, location, or availability status',
-    parameters: {
-      type: SchemaType.OBJECT,
-      properties: {
-        skill: { type: SchemaType.STRING, description: 'Filter by skill' },
-        certification: { type: SchemaType.STRING, description: 'Filter by certification' },
-        location: { type: SchemaType.STRING, description: 'Filter by location' },
-        status: { type: SchemaType.STRING, description: 'Filter by status' },
-      },
-    },
-  },
-  {
-    name: 'query_drones',
-    description: 'Query drones by capability, availability, location, or weather resistance',
-    parameters: {
-      type: SchemaType.OBJECT,
-      properties: {
-        capability: { type: SchemaType.STRING, description: 'Filter by capability' },
-        location: { type: SchemaType.STRING, description: 'Filter by location' },
-        status: { type: SchemaType.STRING, description: 'Filter by status' },
-        weather_resistant: { type: SchemaType.BOOLEAN, description: 'Filter by weather resistance' },
-      },
-    },
-  },
-  {
-    name: 'query_missions',
-    description: 'Query missions by client, location, priority',
-    parameters: {
-      type: SchemaType.OBJECT,
-      properties: {
-        client: { type: SchemaType.STRING, description: 'Filter by client name' },
-        location: { type: SchemaType.STRING, description: 'Filter by mission location' },
-        priority: { type: SchemaType.STRING, description: 'Filter by priority' },
-      },
-    },
-  },
-];
 
 async function executeToolCall(name: string, args: Record<string, unknown>) {
   console.log('Executing tool:', name, args);
@@ -109,8 +68,7 @@ export async function runAgent(messages: ChatMessage[]) {
   
   const model = genAI.getGenerativeModel({
     model: 'gemini-2.5-flash-preview-05-20',
-    tools: [{ functionDeclarations }],
-    systemInstruction: 'You are a professional drone operations coordinator for Skylark Drones. Help manage pilots, drones, and missions. Be friendly and helpful. When someone greets you, respond warmly and explain what you can help with.',
+    systemInstruction: 'You are a professional drone operations coordinator for Skylark Drones. Help manage pilots, drones, and missions. Be friendly and helpful.',
   });
 
   const history = messages.slice(0, -1).map(msg => ({
@@ -121,46 +79,12 @@ export async function runAgent(messages: ChatMessage[]) {
   const chat = model.startChat({ history });
   const lastMessage = messages[messages.length - 1];
   
-  let result = await chat.sendMessage(lastMessage.content);
-  let iterations = 0;
-  const maxIterations = 10;
-
-  while (iterations < maxIterations) {
-    const response = result.response;
-    const candidate = response.candidates?.[0];
-    
-    if (!candidate?.content?.parts) break;
-
-    const functionCalls = candidate.content.parts.filter(
-      (part: any) => part.functionCall
-    );
-
-    if (functionCalls.length === 0) break;
-
-    const functionResponses = await Promise.all(
-      functionCalls.map(async (part: any) => {
-        const { name, args } = part.functionCall;
-        const output = await executeToolCall(name, args);
-        return {
-          functionResponse: {
-            name,
-            response: output,
-          },
-        };
-      })
-    );
-
-    result = await chat.sendMessage(functionResponses);
-    iterations++;
-  }
-
-  const finalResponse = result.response;
-  const textPart = finalResponse.candidates?.[0]?.content?.parts?.find(
-    (part: any) => part.text
-  );
+  const result = await chat.sendMessage(lastMessage.content);
+  const response = result.response;
+  const text = response.text();
 
   return {
     role: 'assistant' as const,
-    content: textPart?.text || 'I apologize, but I was unable to generate a response. Please try again.',
+    content: text || 'I apologize, but I was unable to generate a response. Please try again.',
   };
 }
