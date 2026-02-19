@@ -1,13 +1,5 @@
 {
   "version": 2,
-  "env": {
-    "OPENAI_API_KEY": "@openai-api-key",
-    "GOOGLE_SERVICE_ACCOUNT_EMAIL": "@google-service-account-email",
-    "GOOGLE_PRIVATE_KEY": "@google-private-key",
-    "GOOGLE_SHEET_ID_PILOTS": "@google-sheet-id-pilots",
-    "GOOGLE_SHEET_ID_DRONES": "@google-sheet-id-drones",
-    "GOOGLE_SHEET_ID_MISSIONS": "@google-sheet-id-missions"
-  },
   "build": {
     "env": {
       "OPENAI_API_KEY": "dummy-key-for-build",
